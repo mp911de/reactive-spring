@@ -21,6 +21,11 @@ import static org.assertj.core.api.Assertions.*;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+import java.util.function.Supplier;
+
+import org.reactivestreams.Publisher;
+
 /**
  * @author Mark Paluch
  */
@@ -38,5 +43,12 @@ class Verifications {
 
 	static void verify(Mono<String> mono, String expectedValue) {
 		StepVerifier.create(mono).expectNext(expectedValue).verifyComplete();
+	}
+
+	static <T> void verifyDelayedEmission(Supplier<? extends Publisher<? extends T>> supplier) {
+
+		StepVerifier.withVirtualTime(supplier).thenAwait(Duration.ofSeconds(50)) //
+				.expectNextCount(10) //
+				.verifyComplete();
 	}
 }
