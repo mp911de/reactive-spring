@@ -34,8 +34,7 @@ public class Step5ErrorHandling {
 
 		String recoveryValue = "Recovered!";
 
-		// TODO: Replace this line with a fallback value in an error happens
-		Mono<String> withErrorHandling = failedMono;
+		Mono<String> withErrorHandling = failedMono.onErrorReturn(recoveryValue);
 
 		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
 	}
@@ -47,8 +46,7 @@ public class Step5ErrorHandling {
 
 		Mono<String> recoveryValue = Mono.just("Recovered!");
 
-		// TODO: Replace this line with a fallback that is computed in a deferred way
-		Mono<String> withErrorHandling = failedMono;
+		Mono<String> withErrorHandling = failedMono.onErrorResume(t -> recoveryValue);
 
 		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
 	}
@@ -60,8 +58,7 @@ public class Step5ErrorHandling {
 
 		Mono<String> recoveryValue = Mono.just("Recovered!");
 
-		// TODO: Replace this line with a fallback that is computed in a deferred way
-		Mono<String> withErrorHandling = emptyMono;
+		Mono<String> withErrorHandling = emptyMono.switchIfEmpty(recoveryValue);
 
 		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
 	}
@@ -71,8 +68,7 @@ public class Step5ErrorHandling {
 
 		Mono<String> failedMono = Mono.error(new IllegalStateException("Something bad happened!"));
 
-		// TODO: Replace this line with a Mono translating IllegalStateException to MyBusinessException
-		Mono<String> withErrorHandling = failedMono;
+		Mono<String> withErrorHandling = failedMono.onErrorMap(MyBusinessException::new);
 
 		StepVerifier.create(withErrorHandling).expectError(MyBusinessException.class).verify();
 	}
