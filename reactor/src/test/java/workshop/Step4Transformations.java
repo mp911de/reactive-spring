@@ -33,8 +33,7 @@ public class Step4Transformations {
 
 		Mono<String> mono = Mono.just("Heisenberg");
 
-		// TODO: Replace this line to transform the emitted element to uppercase
-		// mono = …
+		mono = mono.map(String::toUpperCase);
 
 		StepVerifier.create(mono).expectNext("HEISENBERG").verifyComplete();
 	}
@@ -44,8 +43,7 @@ public class Step4Transformations {
 
 		Flux<String> flux = Flux.just("Mike", "Gustavo");
 
-		// TODO: Replace this line to transform the emitted element to uppercase
-		// flux = …
+		flux = flux.map(String::toUpperCase);
 
 		StepVerifier.create(flux).expectNext("MIKE", "GUSTAVO").verifyComplete();
 	}
@@ -55,8 +53,7 @@ public class Step4Transformations {
 
 		Mono<String> mono = Mono.just("Schraderbräu");
 
-		// TODO: Replace this line to emit each character as single element
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = mono.map(s -> s.split("")).flatMapMany(Flux::fromArray);
 
 		StepVerifier.create(flux).expectNext("S", "c", "h", "r", "a", "d", "e", "r", "b", "r", "ä", "u").verifyComplete();
 	}
@@ -67,8 +64,7 @@ public class Step4Transformations {
 		Mono<String> hello = Mono.just("Breaking");
 		Mono<String> world = Mono.just("Bad");
 
-		// TODO: Replace this line to compose a stream from the two Monos
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = Flux.concat(hello, world);
 
 		StepVerifier.create(flux).expectNext("Breaking", "Bad").verifyComplete();
 	}
