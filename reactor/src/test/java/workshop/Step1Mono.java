@@ -38,8 +38,7 @@ public class Step1Mono {
 
 		String jesse = "Jesse";
 
-		// TODO: Replace this line with an implementation creates a Mono from the value above
-		Mono<String> mono = Mono.empty();
+		Mono<String> mono = Mono.just(jesse);
 
 		verify(mono, jesse);
 	}
@@ -51,8 +50,7 @@ public class Step1Mono {
 
 		Callable<String> myValue = () -> marie;
 
-		// TODO: Replace this line by creating a Mono from the Callable above
-		Mono<String> mono = Mono.empty();
+		Mono<String> mono = Mono.fromCallable(myValue);
 
 		verify(mono, marie);
 	}
@@ -64,9 +62,7 @@ public class Step1Mono {
 
 		Scheduler elastic = Schedulers.elastic();
 
-		// TODO: Replace this line by creating a Mono that publishes its value on a
-		// different thread applying the Scheduler from above
-		Mono<String> mono = Mono.just(walter);
+		Mono<String> mono = Mono.just(walter).subscribeOn(elastic);
 
 		verifyDifferentThread(mono, walter);
 	}
@@ -76,8 +72,7 @@ public class Step1Mono {
 
 		IllegalStateException exception = new IllegalStateException("Skyler found out about weed");
 
-		// TODO: Replace this line by creating a Mono that publishes an error
-		Mono<String> mono = Mono.empty();
+		Mono<String> mono = Mono.error(exception);
 
 		StepVerifier.create(mono).expectError(IllegalStateException.class).verify();
 	}
