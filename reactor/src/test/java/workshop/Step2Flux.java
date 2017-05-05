@@ -35,8 +35,7 @@ public class Step2Flux {
 	@Test
 	public void verifyFluxEmission() {
 
-		// TODO: Replace this line by creating a Flux that publishes "Skyler" and "Walter" elements
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = Flux.just("Skyler", "Walter");
 
 		StepVerifier.create(flux).expectNext("Skyler", "Walter").verifyComplete();
 	}
@@ -46,8 +45,7 @@ public class Step2Flux {
 
 		Stream<Double> stream = Stream.generate(Math::random);
 
-		// TODO: Replace this line by creating a Flux that generates values from a Java 8 Stream
-		Flux<Double> flux = Flux.empty();
+		Flux<Double> flux = Flux.fromStream(stream);
 
 		StepVerifier.create(flux).expectNextCount(5).thenCancel().verify();
 	}
@@ -57,8 +55,7 @@ public class Step2Flux {
 
 		List<String> strings = Arrays.asList("Saul", "Mike");
 
-		// TODO: Replace this line by creating a Flux from a resolved collection
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = Flux.fromIterable(strings);
 
 		StepVerifier.create(flux).expectNext("Saul", "Mike").verifyComplete();
 	}
@@ -68,8 +65,7 @@ public class Step2Flux {
 
 		Duration duration = Duration.ofSeconds(2);
 
-		// TODO: Replace this line by creating a Flux publishing items over time
-		Flux<Long> flux = Flux.empty();
+		Flux<Long> flux = Flux.interval(duration);
 
 		StepVerifier.create(flux.doOnNext(System.out::println).take(4)).expectNext(0L, 1L, 2L, 3L).verifyComplete();
 	}
