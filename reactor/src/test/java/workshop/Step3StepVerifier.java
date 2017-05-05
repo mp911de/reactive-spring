@@ -17,6 +17,7 @@ package workshop;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.util.stream.Stream;
@@ -35,7 +36,7 @@ public class Step3StepVerifier {
 
 		Mono<String> mono = Mono.just("Hello, World").doOnSuccess(System.out::println);
 
-		// Use StepVerifier to verify Mono emission
+		StepVerifier.create(mono).expectNext("Hello, World").verifyComplete();
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class Step3StepVerifier {
 
 		Flux<String> flux = Flux.just("Hello", "World").doOnNext(System.out::println);
 
-		// Use StepVerifier to verify Flux emission
+		StepVerifier.create(flux).expectNext("Hello", "World").verifyComplete();
 	}
 
 	@Test
@@ -51,14 +52,15 @@ public class Step3StepVerifier {
 
 		Flux<Double> flux = Flux.fromStream(Stream.generate(Math::random)).doOnNext(System.out::println);
 
-		// Use StepVerifier to verify Flux emission
+		StepVerifier.create(flux).expectNextCount(5).thenCancel().verify();
 	}
 
 	@Test
 	public void verifyDelayedEmission() {
 
-		Flux<Long> flux = Flux.interval(Duration.ofSeconds(5)).take(10).doOnNext(System.out::println);
-
-		// Use StepVerifier to verify Flux emission, not spending 5 seconds per emission
+		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(5)).take(10).doOnNext(System.out::println))
+				.thenAwait(Duration.ofSeconds(50)) //
+				.expectNextCount(10) //
+				.verifyComplete();
 	}
 }
