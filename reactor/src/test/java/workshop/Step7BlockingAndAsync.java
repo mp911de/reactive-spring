@@ -22,10 +22,10 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Test;
@@ -42,8 +42,7 @@ public class Step7BlockingAndAsync {
 
 		Mono<String> tuco = Mono.just("Tuco").subscribeOn(Schedulers.elastic());
 
-		// TODO: Obtain this value from the Mono above using hard synchronization
-		String result = "";
+		String result = tuco.block();
 
 		assertThat(result).isEqualTo("Tuco");
 	}
@@ -53,8 +52,7 @@ public class Step7BlockingAndAsync {
 
 		Flux<String> salamancas = Flux.just("Hector", "Tuco");
 
-		// TODO: Obtain this value from the Flux above using hard synchronization
-		List<String> result = Collections.emptyList();
+		List<String> result = salamancas.collectList().block();
 
 		assertThat(result).contains("Hector", "Tuco");
 	}
@@ -64,8 +62,7 @@ public class Step7BlockingAndAsync {
 
 		Mono<String> tuco = Mono.just("Tuco").subscribeOn(Schedulers.elastic());
 
-		// TODO: Replace this line to create a CompletableFuture from Mono
-		CompletableFuture<String> future = CompletableFuture.completedFuture("foo");
+		CompletableFuture<String> future = tuco.toFuture();
 
 		future.thenAccept(s -> assertThat(s).isEqualTo("Tuco")).join();
 	}
@@ -78,13 +75,12 @@ public class Step7BlockingAndAsync {
 			return "Mike";
 		};
 
-		// TODO: Observe the output sequence. Use subscribeOn and publishOn to adjust context switching behavior
-		Mono<String> naive = Mono.fromCallable(takesAWhile)
+		Mono<String> naive = Mono.fromCallable(takesAWhile).publishOn(Schedulers.elastic())
 				.doOnSubscribe(it -> System.out.println(Thread.currentThread().getName() + ": Subscribe"))
 				.doOnSuccess(it -> System.out.println(Thread.currentThread().getName() + ": Success"));
 
 		System.out.println("Before subscribe");
-		naive.subscribe();
+		naive.subscribeOn(Schedulers.parallel()).block();
 		System.out.println("After subscribe");
 	}
 
@@ -93,21 +89,25 @@ public class Step7BlockingAndAsync {
 
 		CompletableFuture<String> saul = new CompletableFuture<>();
 
-		// TODO: Create a Mono from the CompletableFuture.
-		Mono<String> naive = Mono.empty();
+		Mono<String> naive = Mono.fromFuture(saul);
+
+		saul.complete("Saul");
 
 		System.out.println("Before subscribe");
 		naive.doOnSuccess(System.out::println).subscribe();
 		System.out.println("After subscribe");
-
-		// TODO: Move the completion before Mono.subscribe to explore the behavior
-		saul.complete("Saul");
 	}
 
 	@Test
 	public void reactivePullGenerator() {
 
 		Flux<Double> doubleStream = Flux.generate(AtomicLong::new, (o, synchronousSink) -> {
+
+			if (o.incrementAndGet() > 10) {
+				synchronousSink.complete();
+			} else {
+				synchronousSink.next(ThreadLocalRandom.current().nextDouble());
+			}
 
 			return o;
 		});
