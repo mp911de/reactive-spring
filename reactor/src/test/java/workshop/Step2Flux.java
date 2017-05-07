@@ -65,8 +65,7 @@ public class Step2Flux {
 
 		Duration duration = Duration.ofSeconds(2);
 
-		Flux<Long> flux = Flux.interval(duration);
-
-		StepVerifier.create(flux.doOnNext(System.out::println).take(4)).expectNext(0L, 1L, 2L, 3L).verifyComplete();
+		StepVerifier.withVirtualTime(() -> Flux.interval(duration).doOnNext(System.out::println).take(4))
+				.thenAwait(Duration.ofSeconds(10)).expectNext(0L, 1L, 2L, 3L).verifyComplete();
 	}
 }
