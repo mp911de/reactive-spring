@@ -15,6 +15,8 @@
  */
 package workshop.server;
 
+import reactor.core.publisher.Flux;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +32,9 @@ public class IndexController {
 	@GetMapping(path = "/")
 	String index(Model model) {
 
-		// model.addAttribute("people", people);
+		Flux<String> people = Flux.just("Hank", "Marie", "Skyler", "Flynn", "Walter");
+
+		model.addAttribute("people", people);
 
 		return "index";
 	}

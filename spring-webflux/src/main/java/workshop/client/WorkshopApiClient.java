@@ -15,6 +15,8 @@
  */
 package workshop.client;
 
+import org.springframework.web.reactive.function.client.WebClient;
+
 /**
  * Reactive client for a web API.
  *
@@ -22,7 +24,15 @@ package workshop.client;
  */
 public class WorkshopApiClient {
 
+	static WebClient client = WebClient.create("http://127.0.0.1:8080");
+
 	public static void main(String[] args) {
 
+		client.get() //
+				.uri("/api/people?count={count}", 10) //
+				.retrieve() //
+				.bodyToFlux(String.class) //
+				.doOnNext(System.out::println) //
+				.blockLast();
 	}
 }

@@ -15,9 +15,9 @@
  */
 package workshop.server;
 
-import java.time.Duration;
-
 import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

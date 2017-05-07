@@ -39,6 +39,33 @@ public class WorkshopController {
 
 	private final DataBufferFactory factory = new DefaultDataBufferFactory();
 
+	@GetMapping("resolved")
+	public String resolvedReturn() {
+		return "Jesse";
+	}
+
+	@GetMapping("deferred")
+	public Mono<String> deferred() {
+		return Mono.just("Jesse");
+	}
+
+	@GetMapping("exchange")
+	public Mono<Void> exchange(ServerWebExchange exchange) {
+
+		exchange.getResponse().setStatusCode(HttpStatus.BAD_GATEWAY);
+
+		DataBuffer dataBuffer = factory.allocateBuffer();
+
+		dataBuffer.write("foo".getBytes());
+
+		return exchange.getResponse().writeWith(Mono.just(dataBuffer));
+	}
+
+	@GetMapping("people")
+	public Flux<Person> getPeople(@RequestParam int count) {
+		return Flux.range(0, count).map(it -> new Person("" + it));
+	}
+
 	static class Person {
 
 		final String name;

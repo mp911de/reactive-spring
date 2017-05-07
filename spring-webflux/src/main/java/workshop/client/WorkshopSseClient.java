@@ -20,6 +20,8 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 
+import org.springframework.web.reactive.function.client.WebClient;
+
 /**
  * Reactive client for a SSE endpoint.
  *
@@ -27,9 +29,15 @@ import java.io.IOException;
  */
 public class WorkshopSseClient {
 
+	static WebClient client = WebClient.create("http://127.0.0.1:8080");
+
 	public static void main(String[] args) throws IOException {
 
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = client.get() //
+				.uri("/sse/messages") //
+				.retrieve() //
+				.bodyToFlux(String.class) //
+				.doOnNext(System.out::println);
 
 		System.out.println("Subscribing to SSE");
 		Disposable subscription = flux.subscribe();
