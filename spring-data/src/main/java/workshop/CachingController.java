@@ -15,7 +15,6 @@
  */
 package workshop;
 
-import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -27,10 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Mark Paluch
  */
 @RestController
-@RequiredArgsConstructor
 public class CachingController {
 
 	final ReactiveRedisTemplate<Object, Object> redis;
+
+	public CachingController(ReactiveRedisTemplate<Object, Object> redis) {
+		this.redis = redis;
+	}
 
 	@GetMapping("expensive/{item}")
 	public Mono<Object> getOrCreate(@PathVariable String item) {
@@ -41,6 +43,12 @@ public class CachingController {
 			return 42L;
 		});
 
-		return expensiveToCalculate;
+		return redis.hasKey(item).flatMap(exists -> {
+
+			if (exists) {
+				return redis.opsForValue().get(item);
+			}
+			return expensiveToCalculate.flatMap(it -> redis.opsForValue().set(item, it).map(ignored -> (Object) it));
+		});
 	}
 }
