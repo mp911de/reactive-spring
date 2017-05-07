@@ -15,6 +15,9 @@
  */
 package workshop;
 
+import reactor.core.publisher.Flux;
+
+import org.springframework.data.mongodb.repository.Tailable;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 /**
@@ -22,4 +25,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
  */
 public interface LoginEventRepository extends ReactiveCrudRepository<LoginEvent, String> {
 
+	@Tailable
+	Flux<LoginEvent> findPeopleBy();
 }

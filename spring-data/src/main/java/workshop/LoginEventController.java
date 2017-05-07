@@ -36,5 +36,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginEventController {
 
+	final MongoTemplate blockingMongo;
+	final ReactiveMongoTemplate mongo;
+	final LoginEventRepository eventRepository;
 
+	public LoginEventController(MongoTemplate blockingMongo, ReactiveMongoTemplate mongo,
+			LoginEventRepository eventRepository) {
+		this.blockingMongo = blockingMongo;
+		this.mongo = mongo;
+		this.eventRepository = eventRepository;
+	}
+
+	@PostConstruct
+	public void postConstruct() {
+
+		blockingMongo.dropCollection(LoginEvent.class);
+		blockingMongo.createCollection(LoginEvent.class, CollectionOptions.empty().capped().size(2048).maxDocuments(1000));
+
+		Flux.interval(Duration.ofSeconds(2)).flatMap(counter -> {
+
+			return mongo.findAll(Person.class).collectList().map(people -> {
+
+				ThreadLocalRandom random = ThreadLocalRandom.current();
+
+				return people.get(random.nextInt(people.size()));
+			});
+		}).map(p -> new LoginEvent(p, Instant.now())).flatMap(mongo::save).subscribe();
+	}
+
+	@GetMapping(value = "/logins", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+	Flux<LoginEvent> streamEvents() {
+		return eventRepository.findPeopleBy();
+	}
 }
