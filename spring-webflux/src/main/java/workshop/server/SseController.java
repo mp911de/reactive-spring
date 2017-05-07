@@ -17,7 +17,12 @@ package workshop.server;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("sse")
 public class SseController {
+
+	@GetMapping(value = "messages", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+	public Flux<Person> getMessages() {
+		return Flux.interval(Duration.ofSeconds(1)).map(it -> new Person("" + it));
+	}
 
 	@Value
 	@RequiredArgsConstructor

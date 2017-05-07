@@ -17,9 +17,18 @@ package workshop.server;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 
 /**
  * Simple controller with a return body.
@@ -29,6 +38,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api")
 public class WorkshopController {
+
+	private final DataBufferFactory factory = new DefaultDataBufferFactory();
+
+	@GetMapping("resolved")
+	public String resolvedReturn() {
+		return "Jesse";
+	}
+
+	@GetMapping("deferred")
+	public Mono<String> deferred() {
+		return Mono.just("Jesse");
+	}
+
+	@GetMapping("exchange")
+	public Mono<Void> exchange(ServerWebExchange exchange) {
+
+		exchange.getResponse().setStatusCode(HttpStatus.BAD_GATEWAY);
+
+		DataBuffer dataBuffer = factory.allocateBuffer();
+
+		dataBuffer.write("foo".getBytes());
+
+		return exchange.getResponse().writeWith(Mono.just(dataBuffer));
+	}
+
+	@GetMapping("people")
+	public Flux<Person> getPeople(@RequestParam int count) {
+		return Flux.range(0, count).map(it -> new Person("" + it));
+	}
 
 	@Value
 	@RequiredArgsConstructor
