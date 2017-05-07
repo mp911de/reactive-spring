@@ -41,6 +41,12 @@ public class CachingController {
 			return 42L;
 		});
 
-		return expensiveToCalculate;
+		return redis.hasKey(item).flatMap(exists -> {
+
+			if (exists) {
+				return redis.opsForValue().get(item);
+			}
+			return expensiveToCalculate.flatMap(it -> redis.opsForValue().set(item, it).map(ignored -> (Object) it));
+		});
 	}
 }
