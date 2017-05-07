@@ -15,8 +15,13 @@
  */
 package workshop;
 
+import io.reactivex.Maybe;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,4 +31,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PeopleController {
 
+	final PersonRepository personRepository;
+
+	@GetMapping("/")
+	Flux<Person> people() {
+		return personRepository.findAll();
+	}
+
+	@GetMapping("/people/{name}")
+	Maybe<Person> person(@PathVariable String name) {
+		return personRepository.findByName(name);
+	}
+
+	@GetMapping("/by-name")
+	Flux<Person> peopleByNameStartsWith(@RequestParam String name) {
+		return personRepository.findPeopleByNameStartsWith(name);
+	}
 }

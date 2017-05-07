@@ -15,6 +15,9 @@
  */
 package workshop;
 
+import io.reactivex.Maybe;
+import reactor.core.publisher.Flux;
+
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 /**
@@ -22,4 +25,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
  */
 public interface PersonRepository extends ReactiveCrudRepository<Person, String> {
 
+	Flux<Person> findPeopleByNameStartsWith(String name);
+
+	Maybe<Person> findByName(String name);
 }

@@ -16,7 +16,19 @@
 package workshop;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,4 +38,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginEventController {
 
+	final MongoTemplate blockingMongo;
+	final ReactiveMongoTemplate mongo;
+	final LoginEventRepository eventRepository;
+
+	@PostConstruct
+	public void postConstruct() {
+
+		blockingMongo.dropCollection(LoginEvent.class);
+		blockingMongo.createCollection(LoginEvent.class, new CollectionOptions(1000, 1000, true));
+
+		Flux.interval(Duration.ofSeconds(2)).flatMap(counter -> {
+
+			return mongo.findAll(Person.class).collectList().map(people -> {
+
+				ThreadLocalRandom random = ThreadLocalRandom.current();
+
+				return people.get(random.nextInt(people.size()));
+			});
+		}).map(p -> new LoginEvent(p, Instant.now())).flatMap(mongo::save).subscribe();
+	}
+
+	@GetMapping(value = "/logins", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+	Flux<LoginEvent> streamEvents() {
+		return eventRepository.findPeopleBy();
+	}
 }
