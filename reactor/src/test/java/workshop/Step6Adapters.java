@@ -15,12 +15,16 @@
  */
 package workshop;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import rx.Observable;
+import rx.RxReactiveStreams;
 import rx.Single;
+
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
@@ -36,8 +40,7 @@ public class Step6Adapters {
 
 		Observable<String> people = Observable.just("Jesse", "Hank");
 
-		// TODO: Use RxReactiveStreams to create a Flux from Observable.
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = Flux.from(RxReactiveStreams.toPublisher(people));
 
 		StepVerifier.create(flux).expectNext("Jesse", "Hank").verifyComplete();
 	}
@@ -47,8 +50,7 @@ public class Step6Adapters {
 
 		Single<String> jesse = Single.just("Jesse");
 
-		// TODO: Use RxReactiveStreams to create a Flux from Observable.
-		Mono<String> mono = Mono.empty();
+		Mono<String> mono = Mono.from(RxReactiveStreams.toPublisher(jesse));
 
 		StepVerifier.create(mono).expectNext("Jesse").verifyComplete();
 	}
@@ -58,11 +60,9 @@ public class Step6Adapters {
 
 		Single<String> empty = Observable.<String> empty().toSingle();
 
-		// TODO: Use RxReactiveStreams to create a Flux from Observable.
-		Mono<String> mono = Mono.empty();
+		Mono<String> mono = Mono.from(RxReactiveStreams.toPublisher(empty));
 
-		// Expect a surprise here
-		StepVerifier.create(mono).verifyComplete();
+		StepVerifier.create(mono).expectError(NoSuchElementException.class).verify();
 	}
 
 	@Test
@@ -70,8 +70,7 @@ public class Step6Adapters {
 
 		io.reactivex.Observable<String> jesse = io.reactivex.Observable.just("Jesse");
 
-		// TODO: Use RxJava 2's Flowable to create a Flux
-		Flux<String> flux = Flux.empty();
+		Flux<String> flux = Flux.from(jesse.toFlowable(BackpressureStrategy.BUFFER));
 
 		StepVerifier.create(flux).expectNext("Jesse").verifyComplete();
 	}
@@ -81,8 +80,7 @@ public class Step6Adapters {
 
 		Flux<String> people = Flux.just("Jesse", "Hank");
 
-		// TODO: Use RxReactiveStreams to create an Observable from Flux.
-		Observable<String> observable = Observable.empty();
+		Observable<String> observable = RxReactiveStreams.toObservable(people);
 
 		observable.test().awaitTerminalEvent().assertResult("Jesse", "Hank");
 	}
@@ -92,8 +90,7 @@ public class Step6Adapters {
 
 		Flux<String> people = Flux.just("Jesse", "Hank");
 
-		// TODO: Use RxReactiveStreams to create an Flowable from Flux.
-		Flowable<String> flowable = Flowable.empty();
+		Flowable<String> flowable = Flowable.fromPublisher(people);
 
 		flowable.test().await().assertResult("Jesse", "Hank").awaitTerminalEvent();
 	}
