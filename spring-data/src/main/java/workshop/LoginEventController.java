@@ -46,7 +46,7 @@ public class LoginEventController {
 	public void postConstruct() {
 
 		blockingMongo.dropCollection(LoginEvent.class);
-		blockingMongo.createCollection(LoginEvent.class, new CollectionOptions(1000, 1000, true));
+		blockingMongo.createCollection(LoginEvent.class, CollectionOptions.empty().capped().size(2048).maxDocuments(1000));
 
 		Flux.interval(Duration.ofSeconds(2)).flatMap(counter -> {
 
