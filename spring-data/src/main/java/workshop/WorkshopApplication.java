@@ -22,7 +22,11 @@ import java.io.IOException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer;
 
 /**
  * @author Mark Paluch
@@ -38,7 +42,7 @@ public class WorkshopApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... strings) throws Exception {
+	public void run(String... strings) {
 
 		mongoOperations.save(new Person("Hank"));
 		mongoOperations.save(new Person("Marie"));
@@ -46,5 +50,15 @@ public class WorkshopApplication implements CommandLineRunner {
 		mongoOperations.save(new Person("Walter"));
 		mongoOperations.save(new Person("Skyler"));
 		mongoOperations.save(new Person("Flynn"));
+	}
+
+	@Bean
+	ReactiveRedisMessageListenerContainer listenerContainer(ReactiveRedisConnectionFactory connectionFactory) {
+		return new ReactiveRedisMessageListenerContainer(connectionFactory);
+	}
+
+	@Bean
+	ReactiveStringRedisTemplate reactiveStringRedisTemplate(ReactiveRedisConnectionFactory connectionFactory) {
+		return new ReactiveStringRedisTemplate(connectionFactory);
 	}
 }
