@@ -79,6 +79,6 @@ public class Step1Mono {
 		// TODO: Replace this line by creating a Mono that publishes an error
 		Mono<String> mono = Mono.empty();
 
-		StepVerifier.create(mono).expectError(IllegalStateException.class).verify();
+		mono.as(StepVerifier::create).expectError(IllegalStateException.class).verify();
 	}
 }

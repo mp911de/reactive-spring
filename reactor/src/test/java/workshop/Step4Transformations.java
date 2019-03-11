@@ -47,7 +47,7 @@ public class Step4Transformations {
 		// TODO: Replace this line to transform the emitted element to uppercase
 		// flux = …
 
-		StepVerifier.create(flux).expectNext("MIKE", "GUSTAVO").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("MIKE", "GUSTAVO").verifyComplete();
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class Step4Transformations {
 		// TODO: Replace this line to emit each character as single element
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("S", "c", "h", "r", "a", "d", "e", "r", "b", "r", "ä", "u").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("S", "c", "h", "r", "a", "d", "e", "r", "b", "r", "ä", "u").verifyComplete();
 	}
 
 	@Test
@@ -70,6 +70,6 @@ public class Step4Transformations {
 		// TODO: Replace this line to compose a stream from the two Monos
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("Breaking", "Bad").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("Breaking", "Bad").verifyComplete();
 	}
 }

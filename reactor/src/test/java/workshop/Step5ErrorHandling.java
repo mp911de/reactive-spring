@@ -37,7 +37,7 @@ public class Step5ErrorHandling {
 		// TODO: Replace this line with a fallback value in an error happens
 		Mono<String> withErrorHandling = failedMono;
 
-		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
+		withErrorHandling.as(StepVerifier::create).expectNext("Recovered!").verifyComplete();
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class Step5ErrorHandling {
 		// TODO: Replace this line with a fallback that is computed in a deferred way
 		Mono<String> withErrorHandling = failedMono;
 
-		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
+		withErrorHandling.as(StepVerifier::create).expectNext("Recovered!").verifyComplete();
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class Step5ErrorHandling {
 		// TODO: Replace this line with a fallback that is computed in a deferred way
 		Mono<String> withErrorHandling = emptyMono;
 
-		StepVerifier.create(withErrorHandling).expectNext("Recovered!").verifyComplete();
+		withErrorHandling.as(StepVerifier::create).expectNext("Recovered!").verifyComplete();
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class Step5ErrorHandling {
 		// TODO: Replace this line with a Mono translating IllegalStateException to MyBusinessException
 		Mono<String> withErrorHandling = failedMono;
 
-		StepVerifier.create(withErrorHandling).expectError(MyBusinessException.class).verify();
+		withErrorHandling.as(StepVerifier::create).expectError(MyBusinessException.class).verify();
 	}
 
 	static class MyBusinessException extends Exception {

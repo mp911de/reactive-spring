@@ -112,6 +112,6 @@ public class Step7BlockingAndAsync {
 			return o;
 		});
 
-		StepVerifier.create(doubleStream).expectNextCount(10).verifyComplete();
+		doubleStream.as(StepVerifier::create).expectNextCount(10).verifyComplete();
 	}
 }

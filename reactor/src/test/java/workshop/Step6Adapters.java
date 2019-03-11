@@ -39,7 +39,7 @@ public class Step6Adapters {
 		// TODO: Use RxReactiveStreams to create a Flux from Observable.
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("Jesse", "Hank").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("Jesse", "Hank").verifyComplete();
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class Step6Adapters {
 		// TODO: Use RxReactiveStreams to create a Flux from Observable.
 		Mono<String> mono = Mono.empty();
 
-		StepVerifier.create(mono).expectNext("Jesse").verifyComplete();
+		mono.as(StepVerifier::create).expectNext("Jesse").verifyComplete();
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class Step6Adapters {
 		Mono<String> mono = Mono.empty();
 
 		// Expect a surprise here
-		StepVerifier.create(mono).verifyComplete();
+		mono.as(StepVerifier::create).verifyComplete();
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class Step6Adapters {
 		// TODO: Use RxJava 2's Flowable to create a Flux
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("Jesse").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("Jesse").verifyComplete();
 	}
 
 	@Test

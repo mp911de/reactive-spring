@@ -38,7 +38,7 @@ public class Step2Flux {
 		// TODO: Replace this line by creating a Flux that publishes "Skyler" and "Walter" elements
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("Skyler", "Walter").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("Skyler", "Walter").verifyComplete();
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class Step2Flux {
 		// TODO: Replace this line by creating a Flux that generates values from a Java 8 Stream
 		Flux<Double> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNextCount(5).thenCancel().verify();
+		flux.as(StepVerifier::create).expectNextCount(5).thenCancel().verify();
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class Step2Flux {
 		// TODO: Replace this line by creating a Flux from a resolved collection
 		Flux<String> flux = Flux.empty();
 
-		StepVerifier.create(flux).expectNext("Saul", "Mike").verifyComplete();
+		flux.as(StepVerifier::create).expectNext("Saul", "Mike").verifyComplete();
 	}
 
 	@Test

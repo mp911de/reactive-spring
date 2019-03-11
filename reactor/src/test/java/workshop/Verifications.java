@@ -33,7 +33,7 @@ class Verifications {
 
 	static void verifyDifferentThread(Mono<String> mono, String expectation) {
 
-		StepVerifier.create(mono).consumeNextWith(s -> {
+		mono.as(StepVerifier::create).consumeNextWith(s -> {
 
 			assertThat(s).isEqualTo(expectation);
 			assertThat(Thread.currentThread().getName()).isNotEqualTo("main");
@@ -42,7 +42,7 @@ class Verifications {
 	}
 
 	static void verify(Mono<String> mono, String expectedValue) {
-		StepVerifier.create(mono).expectNext(expectedValue).verifyComplete();
+		mono.as(StepVerifier::create).expectNext(expectedValue).verifyComplete();
 	}
 
 	static <T> void verifyDelayedEmission(Supplier<? extends Publisher<? extends T>> supplier) {
