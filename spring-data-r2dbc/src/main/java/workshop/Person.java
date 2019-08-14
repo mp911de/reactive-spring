@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,38 @@
  */
 package workshop;
 
-import reactor.core.publisher.Flux;
-
-import org.springframework.data.mongodb.repository.Tailable;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.annotation.Id;
 
 /**
  * @author Mark Paluch
  */
-public interface LoginEventRepository extends ReactiveCrudRepository<LoginEvent, String> {
+public class Person {
 
-	@Tailable
-	Flux<LoginEvent> findPeopleBy();
+	@Id private long id;
+	private String firstname;
+	private String lastname;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
 }

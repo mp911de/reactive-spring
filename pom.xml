@@ -16,6 +16,7 @@
 		<module>spring-webflux</module>
 		<module>spring-rsocket</module>
 		<module>spring-data</module>
+		<module>spring-data-r2dbc</module>
 	</modules>
 
 	<properties>
