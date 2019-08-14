@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,16 @@
  */
 package workshop;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author Mark Paluch
  */
-@Document
-public class Person {
+@SpringBootApplication
+public class WorkshopRSocketApplication {
 
-	String id;
-	final String name;
-
-	public Person(String name) {
-		this.name = name;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
+	public static void main(String[] args) {
+		SpringApplication.run(WorkshopRSocketApplication.class, args);
 	}
 }
