@@ -15,15 +15,16 @@
  */
 package workshop;
 
+import static org.springframework.data.r2dbc.query.Criteria.*;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.springframework.data.r2dbc.query.Criteria.*;
 
 /**
  * @author Mark Paluch
@@ -35,9 +36,16 @@ public class PersonController {
 
 	private final PersonRepository people;
 
-	public PersonController(DatabaseClient databaseClient, PersonRepository people) {
+	private final PersonEventRepository events;
+
+	private final TransactionalService transactionalService;
+
+	public PersonController(DatabaseClient databaseClient, PersonRepository people, PersonEventRepository events,
+			TransactionalService transactionalService) {
 		this.databaseClient = databaseClient;
 		this.people = people;
+		this.events = events;
+		this.transactionalService = transactionalService;
 	}
 
 	@GetMapping("/")
@@ -45,8 +53,18 @@ public class PersonController {
 		return people.findAll();
 	}
 
+	@GetMapping("/events")
+	public Flux<PersonEvent> findAllEvents() {
+		return events.findAll();
+	}
+
 	@GetMapping("/by-name/{name}")
 	public Mono<Person> findOne(@PathVariable String name) {
 		return databaseClient.select().from(Person.class).matching(where("lastname").is(name)).fetch().first();
+	}
+
+	@PostMapping("/create/{firstname}/{lastname}")
+	public Mono<Void> create(@PathVariable String firstname, @PathVariable String lastname) {
+		return transactionalService.addPerson(firstname, lastname);
 	}
 }

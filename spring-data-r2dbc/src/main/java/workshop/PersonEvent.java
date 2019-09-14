@@ -15,22 +15,31 @@
  */
 package workshop;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 
 /**
  * @author Mark Paluch
  */
-public class Person {
+public class PersonEvent {
 
 	@Id private Long id;
-	private String firstname;
-	private String lastname;
 
-	public Person() {}
+	private long personId;
 
-	public Person(String firstname, String lastname) {
-		this.firstname = firstname;
-		this.lastname = lastname;
+	private EventType eventType;
+
+	private LocalDateTime eventTime;
+
+	public PersonEvent(long personId, EventType eventType, LocalDateTime eventTime) {
+		this.personId = personId;
+		this.eventType = eventType;
+		this.eventTime = eventTime;
+	}
+
+	public enum EventType {
+		Insert, Update;
 	}
 
 	public Long getId() {
@@ -41,19 +50,27 @@ public class Person {
 		this.id = id;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public long getPersonId() {
+		return personId;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setPersonId(long personId) {
+		this.personId = personId;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public EventType getEventType() {
+		return eventType;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setEventType(EventType eventType) {
+		this.eventType = eventType;
+	}
+
+	public LocalDateTime getEventTime() {
+		return eventTime;
+	}
+
+	public void setEventTime(LocalDateTime eventTime) {
+		this.eventTime = eventTime;
 	}
 }
