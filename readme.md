@@ -21,7 +21,7 @@ To do this workshop, you just have to:
 Once you mastered the basics, you can continue with Spring WebFlux and Spring Data examples that explain reactive
  programming models with web applications and NoSQL data access.
 
-The solution is available in the [`master`](https://github.com/mp911de/reactive-spring/tree/master) branch ([download](https://github.com/mp911de/reactive-spring/archive/master.zip)) to compare, when you have finished, with what you have done.
+The solution is available in the [`main`](https://github.com/mp911de/reactive-spring/tree/main) branch ([download](https://github.com/mp911de/reactive-spring/archive/main.zip)) to compare, when you have finished, with what you have done.
 
 ## License
 
